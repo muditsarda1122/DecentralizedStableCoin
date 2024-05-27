@@ -7,6 +7,7 @@ import {DSCEngine} from "../src/DSCEngine.sol";
 import {HelperConfig} from "./HelperConfig.s.sol";
 
 contract DeployDSC is Script {
+    address public OWNER = makeAddr("owner");
     address[] public tokenAddresses;
     address[] public priceFeedAddresses;
 
@@ -20,7 +21,7 @@ contract DeployDSC is Script {
         priceFeedAddresses = [wethUsdPriceFeed, wbtcUsdPriceFeed];
 
         vm.startBroadcast(deployerKey);
-        DecentalizedStableCoin dsc = new DecentalizedStableCoin();
+        DecentalizedStableCoin dsc = new DecentalizedStableCoin(0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266);
         DSCEngine engine = new DSCEngine(tokenAddresses, priceFeedAddresses, address(dsc));
         dsc.transferOwnership(address(engine));
         vm.stopBroadcast();

@@ -300,7 +300,7 @@ contract DSCEngine is ReentrancyGuard {
     //////////////////////////////////////
 
     /**
-     * @dev low lovel internal function, do not call if the function s=does not check for the health factor being broken
+     * @dev low lovel internal function, do not call if the function does not check for the health factor being broken
      */
     function _burnDsc(
         uint256 amountDscToBurn,

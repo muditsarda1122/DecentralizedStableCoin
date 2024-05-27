@@ -12,6 +12,7 @@ import {MockV3Aggregator} from "../Mocks/MockV3Aggregator.sol";
 import {MockFailedMintDSC} from "../Mocks/MockFailedMintDsc.sol";
 import {MockFailedTransfer} from "../Mocks/MockFailedTransfer.sol";
 import "forge-std/console.sol";
+import "forge-std/console.sol";
 
 contract DSCEngineTest is Test {
     DeployDSC deployer;
@@ -148,7 +149,7 @@ contract DSCEngineTest is Test {
     function testRevertsIfTransferFromFailedDepositCollateral() public {
         address owner = msg.sender;
         vm.prank(owner);
-        MockFailedTransferFrom mockDsc = new MockFailedTransferFrom();
+        MockFailedTransferFrom mockDsc = new MockFailedTransferFrom(msg.sender);
 
         tokenAddresses = [address(mockDsc)];
         priceFeedAddresses = [ethUsdPriceFeed];
@@ -224,11 +225,15 @@ contract DSCEngineTest is Test {
         dsce.mintDsc(amountToMint);
     }
 
+    // the owner of mockDsc is different from USER. How can this happen?
+
     function testRevertsWhenMintFails() public {
         uint256 amountToMint = 100 ether;
 
         vm.prank(USER);
-        MockFailedMintDSC mockDsc = new MockFailedMintDSC();
+        MockFailedMintDSC mockDsc = new MockFailedMintDSC(msg.sender);
+        console.log(mockDsc.owner());
+        console.log(USER);
 
         tokenAddresses = [weth];
         priceFeedAddresses = [ethUsdPriceFeed];
@@ -238,7 +243,7 @@ contract DSCEngineTest is Test {
             priceFeedAddresses,
             address(mockDsc)
         );
-        vm.startPrank(USER);
+        vm.startPrank(0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38);
         mockDsc.transferOwnership(address(mockDsce));
 
         ERC20Mock(weth).approve(address(mockDsce), AMOUNT_COLLATERAL);
@@ -287,7 +292,7 @@ contract DSCEngineTest is Test {
         address owner = msg.sender;
 
         vm.prank(owner);
-        MockFailedTransfer mockDsc = new MockFailedTransfer();
+        MockFailedTransfer mockDsc = new MockFailedTransfer(msg.sender);
 
         tokenAddresses = [address(mockDsc)];
         priceFeedAddresses = [ethUsdPriceFeed];
